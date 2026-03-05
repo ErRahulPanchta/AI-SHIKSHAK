@@ -2,23 +2,22 @@ import ApiError from "../utils/ApiError.js";
 
 const validate = (schema) => {
   return (req, res, next) => {
-    try {
-      const result = schema.parse({
-        body: req.body,
-        params: req.params,
-        query: req.query
-      });
+    const result = schema.safeParse({
+      body: req.body,
+      params: req.params,
+      query: req.query,
+    });
 
-      req.body = result.body;
-      req.params = result.params;
-      req.query = result.query;
-
-      next();
-    } catch (error) {
-      const message = error.errors?.map((e) => e.message).join(", ");
-
-      next(new ApiError(400, message || "Validation error"));
+    if (!result.success) {
+      const message = result.error.issues.map((e) => e.message).join(", ");
+      return next(new ApiError(400, message));
     }
+
+    if (result.data.body) {
+      req.body = result.data.body;
+    }
+
+    next();
   };
 };
 
