@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import rateLimitMiddleware from "./middleware/rateLimit.middleware.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 import { env } from "./config/env.js";
+import authRoutes from "./modules/auth/auth.routes.js";
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.get("/api/health", (req, res) => {
     message: "Server is running",
   });
 });
+
+app.use("/api/auth", authRoutes);
 
 /* -------------------- Global Error Handler (Placeholder) -------------------- */
 
