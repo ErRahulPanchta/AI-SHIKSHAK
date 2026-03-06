@@ -17,3 +17,32 @@ export const register = asyncHandler(async (req, res) => {
     ),
   );
 });
+
+export const login = asyncHandler(async (req, res) => {
+  const { user, accessToken, refreshToken } = await authService.loginUser(req.body,);
+  res
+    .cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+        "Login successful",
+      ),
+    );
+});

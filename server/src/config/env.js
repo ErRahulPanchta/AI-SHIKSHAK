@@ -12,8 +12,10 @@ const envSchema = z.object({
     .transform((val) => Number(val)),
 
   MONGO_URI: z.string().min(1),
-  JWT_SECRET: z.string().min(10),
-  REFRESH_SECRET: z.string().min(10),
+  JWT_ACCESS_SECRET: z.string().min(10),
+  JWT_REFRESH_SECRET: z.string().min(10),
+  JWT_ACCESS_EXPIRES: z.string(),
+  JWT_REFRESH_EXPIRES: z.string(),
   CLIENT_URL: z.string().url(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   CLOUDINARY_API_KEY: z.string(),
