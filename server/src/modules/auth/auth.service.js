@@ -3,8 +3,9 @@ import User from "../user/user.model.js";
 import ApiError from "../../utils/ApiError.js";
 import {
   generateAccessToken,
-  generateRefreshToken
+  generateRefreshToken,
 } from "../../utils/generateTokens.js";
+import Token from "./token.model.js";
 
 const registerUser = async (data) => {
   const { name, email, password } = data;
@@ -35,27 +36,45 @@ const loginUser = async (data) => {
     throw new ApiError(404, "User not found");
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const validPassword = await bcrypt.compare(password, user.password);
 
-  if (!isPasswordValid) {
+  if (!validPassword) {
     throw new ApiError(401, "Invalid credentials");
   }
 
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
-  user.refreshToken = refreshToken;
-  await user.save();
+  await Token.create({
+    user: user._id,
+    token: refreshToken,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
 
   return {
     user,
     accessToken,
-    refreshToken
+    refreshToken,
   };
 };
 
+const logoutUser = async (refreshToken) => {
+  await Token.updateOne({ token: refreshToken }, { blacklisted: true });
+};
+
+const getMe = async (userId) => {
+  const user = await User.findById(userId).select("-password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return user;
+};
 
 export default {
   registerUser,
   loginUser,
+  logoutUser,
+  getMe,
 };

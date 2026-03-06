@@ -1,19 +1,25 @@
 import { jest } from "@jest/globals";
 import request from "supertest";
-import app from "../src/app.js";
+import app from "../../src/app.js";
+import User from "../../src/modules/user/user.model.js";
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 describe("Auth API", () => {
+
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
   describe("POST /api/auth/register", () => {
-    //test 1
+
     it("should register a new user", async () => {
 
       const res = await request(app)
         .post("/api/auth/register")
         .send({
           name: "Test User",
-          email: `test${Date.now()}@example.com`,
+          email: `user${Date.now()}@example.com`,
           password: "123456789"
         });
 
@@ -22,12 +28,13 @@ describe("Auth API", () => {
 
     });
 
-    //test 2
-    /* it("should fail if email already exists", async () => {
+
+    it("should fail if email already exists", async () => {
+
       const user = {
         name: "Rahul",
-        email: `dup${Date.now()}@test.com`,
-        password: "12345678",
+        email: "duplicate@example.com",
+        password: "123456789"
       };
 
       await request(app).post("/api/auth/register").send(user);
@@ -35,18 +42,24 @@ describe("Auth API", () => {
       const res = await request(app).post("/api/auth/register").send(user);
 
       expect(res.statusCode).toBe(409);
-    }); */
 
-    //test 3
-   /* it("should fail if password is too short", async () => {
-      const res = await request(app).post("/api/auth/register").send({
-        name: "Rahul",
-        email: "test@email.com",
-        password: "123",
-      });
+    });
+
+
+    it("should fail if password is too short", async () => {
+
+      const res = await request(app)
+        .post("/api/auth/register")
+        .send({
+          name: "Test User",
+          email: "shortpass@example.com",
+          password: "123"
+        });
 
       expect(res.statusCode).toBe(400);
-    }); */
+
+    });
 
   });
+
 });

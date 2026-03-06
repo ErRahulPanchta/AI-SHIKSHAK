@@ -46,3 +46,30 @@ export const login = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+export const logout = asyncHandler(async (req, res) => {
+
+  const refreshToken = req.cookies.refreshToken;
+
+  if (refreshToken) {
+    await authService.logoutUser(refreshToken);
+  }
+
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+
+  res.status(200).json(
+    new ApiResponse(200, {}, "Logout successful")
+  );
+
+});
+
+export const me = asyncHandler(async (req, res) => {
+
+  const user = await authService.getMe(req.user.id);
+
+  res.status(200).json(
+    new ApiResponse(200, user, "User profile")
+  );
+
+});
