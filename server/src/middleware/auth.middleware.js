@@ -12,9 +12,9 @@ const authMiddleware = (req, res, next) => {
       throw new ApiError(401, "Unauthorized: Token missing");
     }
 
-    const decoded = jwt.verify(token, env.JWT_SECRET);
+    const decoded = jwt.verify(token, env.JWT_ACCESS_SECRET);
 
-    req.user = decoded;
+    req.user = { id: decoded.id || decoded.userId };
 
     next();
   } catch (error) {

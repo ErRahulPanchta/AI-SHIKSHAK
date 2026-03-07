@@ -10,7 +10,9 @@ import Token from "./token.model.js";
 const registerUser = async (data) => {
   const { name, email, password } = data;
 
-  const existingUser = await User.findOne({ email });
+  const normalizedEmail = email.toLowerCase();
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
 
   if (existingUser) {
     throw new ApiError(409, "User already exists");
@@ -20,7 +22,7 @@ const registerUser = async (data) => {
 
   const user = await User.create({
     name,
-    email,
+    email: normalizedEmail,
     password: hashedPassword,
   });
 
@@ -30,7 +32,9 @@ const registerUser = async (data) => {
 const loginUser = async (data) => {
   const { email, password } = data;
 
-  const user = await User.findOne({ email });
+  const normalizedEmail = email.toLowerCase();
+
+  const user = await User.findOne({ email: normalizedEmail });
 
   if (!user) {
     throw new ApiError(404, "User not found");
