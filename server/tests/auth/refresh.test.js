@@ -10,12 +10,12 @@ describe("Auth API", () => {
 
   beforeEach(async () => {
 
-    const hashedPassword = await bcrypt.hash("123456789", 10);
+    
 
     await User.create({
       name: "Refresh User",
       email: "refresh@test.com",
-      password: hashedPassword
+      password:"123456789"
     });
 
   });

@@ -2,6 +2,7 @@ import authService from "./auth.service.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
+//register
 export const register = asyncHandler(async (req, res) => {
   const user = await authService.registerUser(req.body);
 
@@ -18,6 +19,7 @@ export const register = asyncHandler(async (req, res) => {
   );
 });
 
+//login
 export const login = asyncHandler(async (req, res) => {
   const { user, accessToken, refreshToken } = await authService.loginUser(req.body,);
   res
@@ -47,6 +49,7 @@ export const login = asyncHandler(async (req, res) => {
     );
 });
 
+//logout
 export const logout = asyncHandler(async (req, res) => {
 
   const refreshToken = req.cookies.refreshToken;
@@ -64,6 +67,7 @@ export const logout = asyncHandler(async (req, res) => {
 
 });
 
+//getuser
 export const me = asyncHandler(async (req, res) => {
 
   const user = await authService.getMe(req.user.id);

@@ -7,30 +7,22 @@ import rateLimitMiddleware from "./middleware/rateLimit.middleware.js";
 import errorMiddleware from "./middleware/error.middleware.js";
 import { env } from "./config/env.js";
 import authRoutes from "./modules/auth/auth.routes.js";
+import userRoutes from "./modules/user/user.routes.js";
+import multerErrorHandler from "./middleware/multerError.middleware.js";
 
 const app = express();
 
-/* -------------------- Security Middleware -------------------- */
-
 app.use(helmet());
-
 app.use(corsMiddleware);
-
 app.use(rateLimitMiddleware);
-
-/* -------------------- Parsing Middleware -------------------- */
 
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-/* -------------------- Logging -------------------- */
-
 if (env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
-/* -------------------- Health Route -------------------- */
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
@@ -40,9 +32,9 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-
-/* -------------------- Global Error Handler (Placeholder) -------------------- */
+app.use("/api/users", userRoutes);
 
 app.use(errorMiddleware);
+app.use(multerErrorHandler);
 
 export default app;
