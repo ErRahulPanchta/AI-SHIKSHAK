@@ -8,6 +8,10 @@ import errorMiddleware from "./middleware/error.middleware.js";
 import { env } from "./config/env.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import userRoutes from "./modules/user/user.routes.js";
+import blogRoutes from "./modules/blog/blog.routes.js";
+import categoryRoutes from "./modules/category/category.routes.js";
+import commentRoutes from "./modules/comment/comment.routes.js";
+
 import multerErrorHandler from "./middleware/multerError.middleware.js";
 
 const app = express();
@@ -33,6 +37,9 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/blogs", blogRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api", commentRoutes);
 
 app.use(errorMiddleware);
 app.use(multerErrorHandler);

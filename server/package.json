@@ -8,7 +8,10 @@
     "start": "node src/index.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "test:user": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/user --runInBand",
-    "test:auth": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth --runInBand"
+    "test:auth": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/auth --runInBand",
+    "test:blog": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/blog --runInBand",
+    "test:category": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/category --runInBand",
+    "test:comment": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/comment --runInBand"
   },
   "keywords": [],
   "author": "",
