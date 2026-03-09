@@ -1,19 +1,33 @@
 import { createClient } from "redis";
-import { env } from "./env.js";
 import logger from "../utils/logger.js";
 
-const redisClient = createClient({
-  url: env.REDIS_URL,
-});
+let redisClient = null;
 
-redisClient.on("connect", () => {
-  logger.info("Redis connected");
-});
+export const connectRedis = async () => {
+  if (!process.env.REDIS_URL) {
+    logger.warn("Redis URL not provided. Caching disabled.");
+    return null;
+  }
 
-redisClient.on("error", (err) => {
-  logger.error("Redis error:", err);
-});
+  redisClient = createClient({
+    url: process.env.REDIS_URL
+  });
 
-await redisClient.connect();
+  redisClient.on("connect", () => {
+    logger.info("Redis connected");
+  });
+
+  redisClient.on("error", (err) => {
+    logger.error("Redis error:", err.message);
+  });
+
+  try {
+    await redisClient.connect();
+  } catch (err) {
+    logger.warn("Redis unavailable, continuing without cache.");
+  }
+
+  return redisClient;
+};
 
 export default redisClient;

@@ -8,7 +8,7 @@ import { env } from "./config/env.js";
 
 // Security
 import helmetMiddleware from "./middleware/security/helmet.middleware.js";
-import mongoSanitizeMiddleware from "./middleware/security/mongoSanitize.middleware.js";
+// import mongoSanitizeMiddleware from "./middleware/security/mongoSanitize.middleware.js";
 import { xssMiddleware } from "./middleware/security/xss.middleware.js";
 import hppMiddleware from "./middleware/security/hpp.middleware.js";
 import { apiLimiter } from "./middleware/security/rateLimit.middleware.js";
