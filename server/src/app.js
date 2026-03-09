@@ -22,6 +22,7 @@ import userRoutes from "./modules/user/user.routes.js";
 import blogRoutes from "./modules/blog/blog.routes.js";
 import categoryRoutes from "./modules/category/category.routes.js";
 import commentRoutes from "./modules/comment/comment.routes.js";
+import aiRoutes from "./modules/ai/ai.routes.js";
 
 const app = express();
 
@@ -73,6 +74,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api", commentRoutes);
+app.use("/api/ai", aiRoutes);
 
 //error handling
 app.use(multerErrorHandler);
