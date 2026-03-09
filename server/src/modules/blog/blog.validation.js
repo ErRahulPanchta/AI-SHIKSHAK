@@ -104,3 +104,4 @@ export const rejectBlogSchema = z.object({
       .max(500),
   }),
 });
+

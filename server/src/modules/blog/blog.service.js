@@ -3,6 +3,9 @@ import ApiError from "../../utils/ApiError.js";
 import httpStatus from "../../constant/httpStatus.js";
 import pagination from "../../utils/pagination.js";
 import logger from "../../utils/logger.js";
+import { incrementView } from "../analytics/view.service.js";
+import { getCache, setCache } from "../cache/cache.service.js";
+import { CACHE_KEYS } from "../cache/cache.keys.js";
 
 export const createBlog = async (userId, data) => {
   const blog = await Blog.create({
@@ -110,9 +113,7 @@ export const getBlogBySlug = async (slug) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
   }
 
-  blog.views += 1;
-
-  await blog.save();
+  await incrementView(blog._id);
 
   return blog;
 };
@@ -224,4 +225,115 @@ export const likeBlog = async (blogId) => {
   await blog.save();
 
   return { likes: blog.likes };
+};
+
+export const searchBlogs = async (query) => {
+  const { q } = query;
+
+  if (!q) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Search query is required");
+  }
+
+  const { page, limit, skip } = pagination(query);
+
+  const filter = {
+    $text: { $search: q },
+    status: "approved",
+    isDeleted: false,
+  };
+
+  const blogs = await Blog.find(filter, { score: { $meta: "textScore" } })
+    .populate("author", "name avatar")
+    .populate("category", "name")
+    .sort({ score: { $meta: "textScore" } })
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Blog.countDocuments(filter);
+
+  return {
+    page,
+    total,
+    totalPages: Math.ceil(total / limit),
+    blogs,
+  };
+};
+
+export const getTrendingBlogs = async (query) => {
+  const { page = 1, limit = 10 } = query;
+
+  const cacheKey = CACHE_KEYS.TRENDING(page, limit);
+
+  const cached = await getCache(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
+  const blogs = await Blog.aggregate([
+    {
+      $match: { status: "approved", isDeleted: false },
+    },
+    {
+      $addFields: {
+        trendingScore: {
+          $add: ["$views", { $multiply: ["$likes", 3] }],
+        },
+      },
+    },
+    { $sort: { trendingScore: -1 } },
+    { $skip: (page - 1) * limit },
+    { $limit: limit },
+  ]);
+
+  await setCache(cacheKey, blogs, 300);
+
+  return (page, limit, blogs);
+};
+
+export const getRecommendedBlogs = async (slug) => {
+  const blog = await Blog.findOne({
+    slug,
+    status: "approved",
+    isDeleted: false,
+  });
+
+  if (!blog) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
+  }
+
+  const recommendations = await Blog.aggregate([
+    {
+      $match: {
+        _id: { $ne: blog._id },
+        status: "approved",
+        isDeleted: false,
+        $or: [{ tags: { $in: blog.tags } }, { category: blog.category }],
+      },
+    },
+    {
+      $addFields: {
+        score: {
+          $add: ["$views", { $multiply: ["$likes", 3] }],
+        },
+      },
+    },
+    {
+      $sort: { score: -1 },
+    },
+    {
+      $limit: 5,
+    },
+    {
+      $project: {
+        title: 1,
+        slug: 1,
+        coverImage: 1,
+        views: 1,
+        likes: 1,
+      },
+    },
+  ]);
+
+  return recommendations;
 };

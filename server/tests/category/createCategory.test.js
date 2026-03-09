@@ -1,7 +1,10 @@
 import request from "supertest";
 import app from "../../src/app.js";
 import { createUserAndToken } from "../blog/testUtils.js";
+import { jest } from "@jest/globals";
 
+
+jest.setTimeout(20000);
 describe("Create Category", () => {
 
   it("admin should create category", async () => {

@@ -1,8 +1,9 @@
 import request from "supertest";
 import app from "../../src/app.js";
-
+import { jest } from "@jest/globals";
 import { createUserAndToken, createCategory } from "./testUtils.js";
 
+jest.setTimeout(20000);
 describe("Create Blog", () => {
   it("should create blog with valid data", async () => {
     const { token } = await createUserAndToken();

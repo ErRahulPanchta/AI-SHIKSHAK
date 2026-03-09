@@ -77,3 +77,21 @@ export const likeBlog = asyncHandler(async (req, res) => {
 
   res.json(new ApiResponse(200, result));
 });
+
+export const searchBlogs = asyncHandler(async (req, res) => {
+  const result = await blogService.searchBlogs(req.query);
+
+  res.json(new ApiResponse(200, result));
+});
+
+export const getTrendingBlogs = asyncHandler(async (req, res) => {
+  const result = await blogService.getTrendingBlogs(req.query);
+
+  res.json(new ApiResponse(200, result));
+});
+
+export const getRecommendedBlogs = asyncHandler(async (req, res) => {
+  const blogs = await blogService.getRecommendedBlogs(req.params.slug);
+
+  res.json(new ApiResponse(200, blogs));
+});

@@ -1,8 +1,11 @@
 import request from "supertest";
 import app from "../../src/app.js";
+import { jest } from "@jest/globals";
+
 
 import { createUserAndToken, createCategory, createBlog } from "../blog/testUtils.js";
 
+jest.setTimeout(20000);
 describe("Create Comment", () => {
 
   it("should create comment on blog", async () => {

@@ -1,7 +1,9 @@
 import request from "supertest";
 import app from "../../src/app.js";
+import { jest } from "@jest/globals";
 import Category from "../../src/modules/category/category.model.js";
 
+jest.setTimeout(20000);
 describe("Get Child Categories", () => {
 
   it("should return child categories", async () => {

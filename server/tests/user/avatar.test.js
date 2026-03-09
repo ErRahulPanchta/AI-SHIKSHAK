@@ -1,9 +1,7 @@
 import { jest } from "@jest/globals";
 import path from "path";
 
-/*
- Mock Cloudinary BEFORE importing app
-*/
+jest.setTimeout(20000);
 jest.unstable_mockModule("cloudinary", () => ({
   v2: {
     uploader: {

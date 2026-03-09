@@ -12,14 +12,24 @@ import {
 import validate from "../../middleware/validation.middleware.js";
 import auth from "../../middleware/auth.middleware.js";
 import role from "../../middleware/role.middleware.js";
+import viewMiddleware from "../../middleware/view.middleware.js";
 
 const router = Router();
 
 // Get all blogs
 router.get("/", blogController.getBlogs);
 
+//search a blog
+router.get("/search", blogController.searchBlogs);
+
+//trending
+router.get("/trending", blogController.getTrendingBlogs);
+
+//recommed
+router.get("/:slug/recommendations", blogController.getRecommendedBlogs);
+
 // Get blog by slug
-router.get("/:slug", blogController.getBlogBySlug);
+router.get("/:slug", viewMiddleware, blogController.getBlogBySlug);
 
 // Get related blogs
 router.get("/:slug/related", blogController.getRelatedBlogs);

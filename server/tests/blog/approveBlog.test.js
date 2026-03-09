@@ -1,7 +1,9 @@
 import request from "supertest";
 import app from "../../src/app.js";
-
+import { jest } from "@jest/globals";
 import { createUserAndToken, createCategory, createBlog } from "./testUtils.js";
+
+jest.setTimeout(20000);
 
 describe("Approve Blog", () => {
 

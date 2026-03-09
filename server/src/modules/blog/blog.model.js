@@ -152,6 +152,10 @@ const blogSchema = new Schema(
       type: Number,
       default: 0,
     },
+    uniqueViews: {
+      type: Number,
+      default: 0,
+    },
 
     likes: {
       type: Number,
