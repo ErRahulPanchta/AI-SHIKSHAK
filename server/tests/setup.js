@@ -1,11 +1,16 @@
 import mongoose from "mongoose";
-import { connectDB } from "../src/config/db.js";
-import dns from "dns";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+let mongoServer;
 
 beforeAll(async () => {
-  await connectDB();
+  mongoServer = await MongoMemoryServer.create();
+
+  const uri = mongoServer.getUri();
+
+  await mongoose.connect(uri, {
+    dbName: "jest",
+  });
 });
 
 afterEach(async () => {
@@ -17,5 +22,6 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  await mongoose.connection.close();
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });

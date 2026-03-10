@@ -21,7 +21,9 @@ export const register = asyncHandler(async (req, res) => {
 
 //login
 export const login = asyncHandler(async (req, res) => {
-  const { user, accessToken, refreshToken } = await authService.loginUser(req.body,);
+  const { user, accessToken, refreshToken } = await authService.loginUser(
+    req.body,
+  );
   res
     .cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -51,7 +53,6 @@ export const login = asyncHandler(async (req, res) => {
 
 //logout
 export const logout = asyncHandler(async (req, res) => {
-
   const refreshToken = req.cookies.refreshToken;
 
   if (refreshToken) {
@@ -61,19 +62,12 @@ export const logout = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
 
-  res.status(200).json(
-    new ApiResponse(200, {}, "Logout successful")
-  );
-
+  res.status(200).json(new ApiResponse(200, {}, "Logout successful"));
 });
 
 //getuser
 export const me = asyncHandler(async (req, res) => {
-
   const user = await authService.getMe(req.user.id);
 
-  res.status(200).json(
-    new ApiResponse(200, user, "User profile")
-  );
-
+  res.status(200).json(new ApiResponse(200, user, "User profile"));
 });

@@ -7,12 +7,30 @@ import {
   chatbotPrompt,
 } from "./ai.prompts.js";
 
-const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY,
-});
+let openai = null;
+
+const getOpenAI = () => {
+  if (env.NODE_ENV === "test") {
+    return null;
+  }
+
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: env.OPENAI_API_KEY,
+    });
+  }
+
+  return openai;
+};
 
 const askAI = async (prompt) => {
-  const response = await openai.chat.completions.create({
+  const client = getOpenAI();
+
+  if (!client) {
+    throw new Error("AI service unavailable in test environment");
+  }
+
+  const response = await client.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
       {

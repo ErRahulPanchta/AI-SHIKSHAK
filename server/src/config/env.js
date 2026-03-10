@@ -1,9 +1,12 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
+// Load correct env file
 dotenv.config({
   path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
 });
+
+const isTest = process.env.NODE_ENV === "test";
 
 const envSchema = z.object({
   NODE_ENV: z
@@ -15,17 +18,24 @@ const envSchema = z.object({
     .default("8080")
     .transform((val) => Number(val)),
 
-  MONGO_URI: z.string().min(1),
+  // Optional during tests because MongoMemoryServer is used
+  MONGO_URI: isTest ? z.string().optional() : z.string().min(1),
+
   JWT_ACCESS_SECRET: z.string().min(10),
   JWT_REFRESH_SECRET: z.string().min(10),
+
   JWT_ACCESS_EXPIRES: z.string(),
   JWT_REFRESH_EXPIRES: z.string(),
+
   CLIENT_URL: z.string().url(),
-  CLOUDINARY_CLOUD_NAME: z.string(),
-  CLOUDINARY_API_KEY: z.string(),
-  CLOUDINARY_API_SECRET: z.string(),
-  REDIS_URL: z.string(),
-  OPENAI_API_KEY: z.string(),
+
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional(),
+
+  REDIS_URL: z.string().optional(),
+
+  OPENAI_API_KEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
