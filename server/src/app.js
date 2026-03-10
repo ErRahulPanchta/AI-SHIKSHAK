@@ -13,7 +13,7 @@ import { xssMiddleware } from "./middleware/security/xss.middleware.js";
 import hppMiddleware from "./middleware/security/hpp.middleware.js";
 import { apiLimiter } from "./middleware/security/rateLimit.middleware.js";
 
-//swagger
+// Swagger
 import { swaggerUi, swaggerSpec } from "./docs/swagger.js";
 
 // Routes
@@ -26,31 +26,38 @@ import aiRoutes from "./modules/ai/ai.routes.js";
 
 const app = express();
 
-//trust proxy
+// Trust proxy (required for rate limiter + cookies in production)
 app.set("trust proxy", 1);
 
-//security layer
+// CORS
 app.use(corsMiddleware);
-app.use(helmetMiddleware);
-app.use(apiLimiter);
 
-//body parser
+// Security middlewares (disabled in tests)
+if (env.NODE_ENV !== "test") {
+  app.use(helmetMiddleware);
+  app.use(apiLimiter);
+}
+
+// Body parsers
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
-//sanitization
-// app.use(mongoSanitizeMiddleware);
-app.use(xssMiddleware);
-app.use(hppMiddleware);
+// Sanitization (disabled in tests)
+if (env.NODE_ENV !== "test") {
+  // app.use(mongoSanitizeMiddleware);
+  app.use(xssMiddleware);
+  app.use(hppMiddleware);
+}
 
-//utilities
+// Utilities
 app.use(cookieParser());
 
+// Logger
 if (env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-//health check
+// Health check
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -58,6 +65,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Root route
 app.get("/", (req, res) => {
   res.json({
     message: "AI SHIKSHAK API",
@@ -65,10 +73,10 @@ app.get("/", (req, res) => {
   });
 });
 
-//swagger
+// Swagger docs
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-//routes
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
@@ -76,7 +84,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api", commentRoutes);
 app.use("/api/ai", aiRoutes);
 
-//error handling
+// Error handling
 app.use(multerErrorHandler);
 app.use(errorMiddleware);
 

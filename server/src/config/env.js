@@ -1,5 +1,9 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import { z } from "zod";
+
+dotenv.config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
 
 const envSchema = z.object({
   NODE_ENV: z
@@ -21,6 +25,7 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   REDIS_URL: z.string(),
+  OPENAI_API_KEY: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

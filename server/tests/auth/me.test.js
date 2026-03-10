@@ -1,6 +1,5 @@
 import { jest } from "@jest/globals";
 import request from "supertest";
-import bcrypt from "bcrypt";
 import app from "../../src/app.js";
 import User from "../../src/modules/user/user.model.js";
 
