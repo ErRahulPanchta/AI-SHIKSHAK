@@ -4,6 +4,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 //register
 export const register = asyncHandler(async (req, res) => {
+
   const user = await authService.registerUser(req.body);
 
   res.status(201).json(
@@ -12,30 +13,32 @@ export const register = asyncHandler(async (req, res) => {
       {
         id: user._id,
         name: user.name,
-        email: user.email,
+        email: user.email
       },
-      "User registered successfully",
-    ),
+      "User registered successfully"
+    )
   );
+
 });
 
 //login
 export const login = asyncHandler(async (req, res) => {
-  const { user, accessToken, refreshToken } = await authService.loginUser(
-    req.body,
-  );
+
+  const { user, accessToken, refreshToken } =
+    await authService.loginUser(req.body);
+
   res
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
       sameSite: "strict",
-      maxAge: 15 * 60 * 1000,
+      secure: false,
+      maxAge: 15 * 60 * 1000
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200)
     .json(
@@ -44,11 +47,12 @@ export const login = asyncHandler(async (req, res) => {
         {
           id: user._id,
           name: user.name,
-          email: user.email,
+          email: user.email
         },
-        "Login successful",
-      ),
+        "Login successful"
+      )
     );
+
 });
 
 //logout

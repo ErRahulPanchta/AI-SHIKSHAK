@@ -35,8 +35,6 @@ describe("Auth API", () => {
 
       const res = await request(app).post("/api/auth/register").send(user);
 
-      console.log(res.body);
-      console.log(res.statusCode);
       expect(res.statusCode).toBe(409);
     });
 

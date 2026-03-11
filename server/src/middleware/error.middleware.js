@@ -1,19 +1,31 @@
 import ApiError from "../utils/ApiError.js";
-import logger from "../utils/logger.js";
 
 const errorMiddleware = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
 
-  // Log unexpected errors
-  if (!(err instanceof ApiError)) {
-    logger.error(err);
+  // If the error is our custom ApiError
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+    });
   }
 
-  res.status(statusCode).json({
+  // If error has statusCode property
+  if (err.statusCode) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+    });
+  }
+
+  // Fallback
+  console.error(err);
+
+  return res.status(500).json({
     success: false,
-    message,
+    message: "Internal Server Error",
   });
+  
 };
 
 export default errorMiddleware;

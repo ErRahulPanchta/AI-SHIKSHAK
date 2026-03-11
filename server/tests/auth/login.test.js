@@ -37,8 +37,7 @@ describe("Auth API", () => {
         email: "example1@example.com",
         password: "wrongpassword",
       });
-      console.log(res.body);
-      console.log(res.statusCode);
+      
       expect(res.statusCode).toBe(401);
     });
 
@@ -48,8 +47,7 @@ describe("Auth API", () => {
         password: "123456789",
       });
 
-      console.log(res.body);
-      console.log(res.statusCode);
+      
       expect(res.statusCode).toBe(404);
     });
   });
