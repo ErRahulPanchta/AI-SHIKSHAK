@@ -8,6 +8,23 @@ import {
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: AI
+ *   description: AI APIs
+ */
+
+/**
+ * @swagger
+ * /ai/summarize:
+ *   post:
+ *     summary: Summarize content
+ *     tags: [AI]
+ *     responses:
+ *       200:
+ *         description: Summary generated
+ */
 router.post("/summarize", summarize);
 router.post("/tags", generateTags);
 router.post("/explain", explain);

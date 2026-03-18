@@ -5,11 +5,8 @@ import logger from "../utils/logger.js";
 let redisClient = null;
 
 export const connectRedis = async () => {
-  console.log("PROCESS REDIS:", process.env.REDIS_URL);
-  console.log("ZOD REDIS:", env.REDIS_URL);
   if (!env.REDIS_URL) {
     logger.warn("Redis URL not provided. Skipping Redis connection.");
-    console.log("REDIS_URL:", env.REDIS_URL);
     return null;
   }
 

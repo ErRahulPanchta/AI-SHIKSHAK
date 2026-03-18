@@ -16,6 +16,24 @@ import role from "../../middleware/role.middleware.js";
 const router = Router();
 
 // Get all categories
+
+/**
+ * @swagger
+ * tags:
+ *   name: Category
+ *   description: Category APIs
+ */
+
+/**
+ * @swagger
+ * /categories:
+ *   get:
+ *     summary: Get all categories
+ *     tags: [Category]
+ *     responses:
+ *       200:
+ *         description: Categories fetched
+ */
 router.get("/", categoryController.getCategories);
 
 // Get category by slug

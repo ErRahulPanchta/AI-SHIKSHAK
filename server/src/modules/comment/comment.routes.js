@@ -15,6 +15,23 @@ import auth from "../../middleware/auth.middleware.js";
 
 const router = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Comment
+ *   description: Comment APIs
+ */
+
+/**
+ * @swagger
+ * /blogs/{blogId}/comments:
+ *   get:
+ *     summary: Get blog comments
+ *     tags: [Comment]
+ *     responses:
+ *       200:
+ *         description: Comments fetched
+ */
 router.get(
   "/blogs/:blogId/comments",
   validate(getBlogCommentsSchema),

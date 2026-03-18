@@ -8,6 +8,23 @@ import { updateUserSchema, updateRoleSchema } from "./user.validation.js";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: User APIs
+ */
+
+/**
+ * @swagger
+ * /users/me:
+ *   patch:
+ *     summary: Update user profile
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: Profile updated
+ */
 router.patch(
   "/me",
   authMiddleware,

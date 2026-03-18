@@ -21,9 +21,7 @@ const options = {
     ],
   },
 
-  apis: [
-    path.resolve("./src/modules/**/*.js"),
-  ],
+  apis: ["./src/modules/**/*.js"]
 };
 
 const swaggerSpec = swaggerJsdoc(options);

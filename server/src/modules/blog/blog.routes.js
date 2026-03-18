@@ -17,6 +17,24 @@ import viewMiddleware from "../../middleware/view.middleware.js";
 const router = Router();
 
 // Get all blogs
+
+/**
+ * @swagger
+ * tags:
+ *   name: Blog
+ *   description: Blog APIs
+ */
+
+/**
+ * @swagger
+ * /blogs:
+ *   get:
+ *     summary: Get all blogs
+ *     tags: [Blog]
+ *     responses:
+ *       200:
+ *         description: List of blogs
+ */
 router.get("/", blogController.getBlogs);
 
 //search a blog
@@ -38,6 +56,17 @@ router.get("/:slug/related", blogController.getRelatedBlogs);
 router.get("/author/:userId", blogController.getBlogsByAuthor);
 
 // Create blog
+
+/**
+ * @swagger
+ * /blogs:
+ *   post:
+ *     summary: Create a blog
+ *     tags: [Blog]
+ *     responses:
+ *       201:
+ *         description: Blog created
+ */
 router.post("/", auth, validate(createBlogSchema), blogController.createBlog);
 
 // Update blog
