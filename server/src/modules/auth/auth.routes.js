@@ -1,5 +1,14 @@
 import express from "express";
-import { login, logout, me, register } from "./auth.controller.js";
+import {
+  forgotPassword,
+  login,
+  logout,
+  me,
+  register,
+  requestOtp,
+  resetPassword,
+  verifyOtp,
+} from "./auth.controller.js";
 import validate from "../../middleware/validation.middleware.js";
 import { loginSchema, registerSchema } from "./auth.validation.js";
 import { refresh } from "./refresh.controller.js";
@@ -12,6 +21,8 @@ const skipLimiter =
   process.env.NODE_ENV === "test" ? (req, res, next) => next() : authLimiter;
 
 router.post("/register", validate(registerSchema), register);
+router.post("/request-otp", requestOtp);
+router.post("/verify-otp", verifyOtp);
 router.post("/login", skipLimiter, validate(loginSchema), login);
 
 router.post("/refresh", refresh);
@@ -19,5 +30,7 @@ router.post("/refresh", refresh);
 router.post("/logout", logout);
 
 router.get("/me", authMiddleware, me);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;

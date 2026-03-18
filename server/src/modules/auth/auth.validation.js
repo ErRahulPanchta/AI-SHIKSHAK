@@ -10,3 +10,13 @@ export const loginSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6),
+  newPassword: z.string().min(6),
+});
