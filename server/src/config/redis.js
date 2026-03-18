@@ -13,14 +13,30 @@ export const connectRedis = async () => {
   try {
     redisClient = createClient({
       url: env.REDIS_URL,
+      socket: {
+        tls: true,
+        rejectUnauthorized: false, 
+      },
     });
 
     redisClient.on("connect", () => {
       logger.info("Redis connected");
     });
 
+    redisClient.on("ready", () => {
+      logger.info("Redis ready to use");
+    });
+
+    redisClient.on("reconnecting", () => {
+      logger.warn("Redis reconnecting...");
+    });
+
+    redisClient.on("end", () => {
+      logger.warn("Redis connection closed");
+    });
+
     redisClient.on("error", (err) => {
-      logger.error("Redis error:", err.message);
+      logger.error("Redis error FULL:", err); 
     });
 
     await redisClient.connect();
@@ -29,8 +45,14 @@ export const connectRedis = async () => {
 
   } catch (error) {
     logger.warn("Redis unavailable. Continuing without cache.");
+    logger.error("Redis connection failed:", error);
     return null;
   }
 };
 
-export default redisClient;
+export const getRedisClient = () => {
+  if (!redisClient) {
+    logger.warn(" Redis not initialized yet");
+  }
+  return redisClient;
+};
