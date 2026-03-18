@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 import { z } from "zod";
 
 // Load correct env file
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV === "test") {
+  dotenv.config({ path: ".env.test" });
+} else if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
