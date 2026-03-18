@@ -16,7 +16,6 @@ export const connectRedis = async () => {
   try {
     redisClient = createClient({
       url: env.REDIS_URL,
-    
     });
 
     redisClient.on("connect", () => {
@@ -37,6 +36,8 @@ export const connectRedis = async () => {
 
     redisClient.on("error", (err) => {
       logger.error("Redis error FULL:", err);
+      console.error("REDIS ERROR RAW:", err);
+      console.error("REDIS ERROR MESSAGE:", err?.message);
     });
 
     await redisClient.connect();
@@ -45,6 +46,8 @@ export const connectRedis = async () => {
   } catch (error) {
     logger.warn("Redis unavailable. Continuing without cache.");
     logger.error("Redis connection failed:", error);
+    console.error("REDIS CATCH ERROR:", error);
+    console.error("REDIS CATCH MESSAGE:", error?.message);
     return null;
   }
 };
