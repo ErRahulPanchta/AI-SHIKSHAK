@@ -6,7 +6,6 @@ on:
 
 jobs:
   backend-ci-cd:
-
     runs-on: ubuntu-latest
 
     defaults:
@@ -14,21 +13,23 @@ jobs:
         working-directory: server
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
+      - name: Create .env.test file
+        run: echo "${{ secrets.ENV }}" > .env.test
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test
 
-    - name: Deploy to Render
-      run: |
-        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      - name: Deploy to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
