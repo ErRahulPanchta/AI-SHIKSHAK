@@ -36,6 +36,13 @@ const envSchema = z.object({
   REDIS_URL: z.string().optional(),
 
   OPENAI_API_KEY: z.string().optional(),
+
+  SMTP_HOST: isTest ? z.string().optional() : z.string(),
+  SMTP_PORT: isTest ? z.string().optional() : z.string(),
+  SMTP_USER: isTest ? z.string().optional() : z.string(),
+  SMTP_PASS: isTest ? z.string().optional() : z.string(),
+  EMAIL_FROM: isTest ? z.string().optional() : z.string(),
+  OTP_EXPIRE_MINUTES: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

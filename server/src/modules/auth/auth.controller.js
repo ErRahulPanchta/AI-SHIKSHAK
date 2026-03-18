@@ -76,42 +76,38 @@ export const me = asyncHandler(async (req, res) => {
 
 //request otp
 export const requestOtp = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const { email, type } = req.body;
 
-  await otpService.requestOTP(email);
+  await otpService.requestOTP(email, type);
 
   res.status(200).json(new ApiResponse(200, null, "OTP sent successfully"));
 });
 
 //verify otp
 export const verifyOtp = asyncHandler(async (req, res) => {
-  const { email, otp } = req.body;
+  const { email, otp, type } = req.body;
 
-  await otpService.verifyOTP(email, otp);
+  await otpService.verifyOTP(email, otp, type);
 
-  res.status(200).json(new ApiResponse(200, null, "Email verified"));
+  res.status(200).json(new ApiResponse(200, null, "OTP verified successfully"));
 });
 
 // forgot password
 export const forgotPassword = asyncHandler(async (req, res) => {
-
   const { email } = req.body;
 
   await authService.forgotPassword(email);
 
-  res.status(200).json(
-    new ApiResponse(200, null, "OTP sent for password reset")
-  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, null, "OTP sent for password reset"));
 });
 
 // reset password
 export const resetPassword = asyncHandler(async (req, res) => {
+  const { email, newPassword } = req.body;
 
-  const { email, otp, newPassword } = req.body;
+  await authService.resetPassword(email, newPassword);
 
-  await authService.resetPassword(email, otp, newPassword);
-
-  res.status(200).json(
-    new ApiResponse(200, null, "Password reset successful")
-  );
+  res.status(200).json(new ApiResponse(200, null, "Password reset successful"));
 });

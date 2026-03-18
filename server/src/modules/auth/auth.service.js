@@ -6,40 +6,33 @@ import {
 } from "../../utils/generateTokens.js";
 import Token from "./token.model.js";
 import OTP from "./otp.model.js";
-import { sendOTPEmail } from "./email.service.js";
-import { generateOTP } from "../../utils/generateOtp.js";
+import otpService from "./otp.service.js";
 
 //register user
 const registerUser = async (data) => {
   const { name, email, password } = data;
 
-  // normalize email
   const normalizedEmail = email.toLowerCase();
 
-  // check existing user
   const existingUser = await User.findOne({ email: normalizedEmail });
   if (existingUser) {
     throw new ApiError(409, "User already exists");
   }
 
-  // check OTP record
   const otpRecord = await OTP.findOne({ email: normalizedEmail });
 
   if (!otpRecord) {
     throw new ApiError(400, "OTP not requested for this email");
   }
 
-  // check verified
   if (!otpRecord.verified) {
     throw new ApiError(400, "Email not verified");
   }
 
-  // check expiry
   if (otpRecord.expiresAt < new Date()) {
     throw new ApiError(400, "OTP expired");
   }
 
-  // create user
   const user = await User.create({
     name,
     email: normalizedEmail,
@@ -47,10 +40,8 @@ const registerUser = async (data) => {
     isEmailVerified: true,
   });
 
-  // cleanup OTP
   await OTP.deleteOne({ email: normalizedEmail });
 
-  // remove password
   const userResponse = user.toObject();
   delete userResponse.password;
 
@@ -120,27 +111,24 @@ const getMe = async (userId) => {
 };
 // forgot password
 const forgotPassword = async (email) => {
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const normalizedEmail = email.toLowerCase();
+
+  const user = await User.findOne({ email: normalizedEmail });
 
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-
-  const otp = generateOTP();
-
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
-  await OTP.findOneAndUpdate(
-    { email, type: "reset" },
-    { otp, expiresAt, verified: false },
-    { upsert: true, returnDocument: "after" },
-  );
-
-  await sendOTPEmail(email, otp);
+  await otpService.requestOTP(normalizedEmail, "reset");
 };
 
-const resetPassword = async (email, otp, newPassword) => {
-  const record = await OTP.findOne({ email, type: "reset" });
+//reset password
+const resetPassword = async (email, newPassword) => {
+  const normalizedEmail = email.toLowerCase();
+
+  const record = await OTP.findOne({
+    email: normalizedEmail,
+    type: "reset",
+  });
 
   if (!record) {
     throw new ApiError(400, "OTP not requested");
@@ -154,7 +142,7 @@ const resetPassword = async (email, otp, newPassword) => {
     throw new ApiError(400, "OTP expired");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: normalizedEmail });
 
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -163,7 +151,7 @@ const resetPassword = async (email, otp, newPassword) => {
   user.password = newPassword;
   await user.save();
 
-  await OTP.deleteOne({ email, type: "reset" });
+  await OTP.deleteOne({ email: normalizedEmail, type: "reset" });
 };
 
 export default {
