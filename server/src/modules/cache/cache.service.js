@@ -1,13 +1,11 @@
-import redisClient from "../../config/redis.js";
+import {getRedisClient} from "../../config/redis.js";
 
-/**
- * Get cached value
- */
+
 export const getCache = async (key) => {
-  if (!redisClient) return null;
+  if (!getRedisClient) return null;
 
   try {
-    const data = await redisClient.get(key);
+    const data = await getRedisClient.get(key);
 
     if (!data) return null;
 
@@ -18,14 +16,12 @@ export const getCache = async (key) => {
   }
 };
 
-/**
- * Set cache value
- */
+
 export const setCache = async (key, value, ttl = 300) => {
-  if (!redisClient) return;
+  if (!getRedisClient) return;
 
   try {
-    await redisClient.set(key, JSON.stringify(value), {
+    await getRedisClient.set(key, JSON.stringify(value), {
       EX: ttl,
     });
   } catch (error) {
@@ -33,14 +29,12 @@ export const setCache = async (key, value, ttl = 300) => {
   }
 };
 
-/**
- * Delete cache key
- */
+
 export const deleteCache = async (key) => {
-  if (!redisClient) return;
+  if (!getRedisClient) return;
 
   try {
-    await redisClient.del(key);
+    await getRedisClient.del(key);
   } catch (error) {
     console.error("Redis deleteCache error:", error.message);
   }
