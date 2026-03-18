@@ -16,10 +16,7 @@ export const connectRedis = async () => {
   try {
     redisClient = createClient({
       url: env.REDIS_URL,
-      socket: {
-        tls: true,
-        rejectUnauthorized: false,
-      },
+    
     });
 
     redisClient.on("connect", () => {
