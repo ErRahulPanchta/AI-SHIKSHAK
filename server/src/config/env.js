@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 import { z } from "zod";
 
 // Load correct env file
-dotenv.config({
-  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
-});
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 const isTest = process.env.NODE_ENV === "test";
 
@@ -18,7 +18,6 @@ const envSchema = z.object({
     .default("8080")
     .transform((val) => Number(val)),
 
-  // Optional during tests because MongoMemoryServer is used
   MONGO_URI: isTest ? z.string().optional() : z.string().min(1),
 
   JWT_ACCESS_SECRET: z.string().min(10),

@@ -3,7 +3,6 @@ import { env } from "./env.js";
 
 export const connectDB = async () => {
   try {
-
     if (mongoose.connection.readyState === 1) {
       return;
     }
@@ -13,7 +12,6 @@ export const connectDB = async () => {
     if (env.NODE_ENV !== "test") {
       console.log(`MongoDB Connected: ${conn.connection.host}`);
     }
-
   } catch (error) {
     console.error("Database connection failed:", error);
     process.exit(1);

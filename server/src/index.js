@@ -4,7 +4,7 @@ import { connectRedis } from "./config/redis.js";
 import { env } from "./config/env.js";
 import dns from "dns";
 
-// dns.setServers(["8.8.8.8", "8.8.4.4"]); //for dev
+dns.setServers(["8.8.8.8", "8.8.4.4"]); //for dev
 
 const startServer = async () => {
   try {
@@ -18,7 +18,6 @@ const startServer = async () => {
     app.listen(env.PORT, () => {
       console.log(`Server running on port http://localhost:${env.PORT}`);
     });
-
   } catch (error) {
     console.error("Failed to start server:", error.message);
     process.exit(1);

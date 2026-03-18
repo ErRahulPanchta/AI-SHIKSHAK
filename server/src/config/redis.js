@@ -5,8 +5,11 @@ import logger from "../utils/logger.js";
 let redisClient = null;
 
 export const connectRedis = async () => {
+  console.log("PROCESS REDIS:", process.env.REDIS_URL);
+  console.log("ZOD REDIS:", env.REDIS_URL);
   if (!env.REDIS_URL) {
     logger.warn("Redis URL not provided. Skipping Redis connection.");
+    console.log("REDIS_URL:", env.REDIS_URL);
     return null;
   }
 
@@ -15,7 +18,7 @@ export const connectRedis = async () => {
       url: env.REDIS_URL,
       socket: {
         tls: true,
-        rejectUnauthorized: false, 
+        rejectUnauthorized: false,
       },
     });
 
@@ -36,13 +39,12 @@ export const connectRedis = async () => {
     });
 
     redisClient.on("error", (err) => {
-      logger.error("Redis error FULL:", err); 
+      logger.error("Redis error FULL:", err);
     });
 
     await redisClient.connect();
 
     return redisClient;
-
   } catch (error) {
     logger.warn("Redis unavailable. Continuing without cache.");
     logger.error("Redis connection failed:", error);
