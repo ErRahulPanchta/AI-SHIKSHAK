@@ -1,7 +1,7 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../services/auth.service.js";
+import toast from "react-hot-toast";
+import { requestOtp } from "../../services/auth.service";
 
 const Register = () => {
   const [data, setData] = useState({
@@ -11,92 +11,112 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (data.password !== data.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+  if (!data.name || !data.email || !data.password) {
+    return toast.error("All fields are required");
+  }
 
-    try {
-      const res = await registerUser({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
+  if (data.password.length < 6) {
+    return toast.error("Password must be at least 6 characters");
+  }
 
-      if (res.data.success) {
-        toast.success(res.data.message || "Registered successfully");
-        setData({
-          name: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-        });
-        navigate("/login");
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
-  };
+  if (data.password !== data.confirmPassword) {
+    return toast.error("Passwords do not match");
+  }
+
+  try {
+    setLoading(true);
+
+    await requestOtp({
+      email: data.email,
+      type: "verify",
+    });
+
+    toast.success("OTP sent to your email");
+
+    navigate("/verify-otp", { state: data });
+  } catch (error) {
+    toast.error(error?.response?.data?.message || "Failed to send OTP");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <section className="flex justify-center items-center min-h-screen">
-      <div className="bg-white p-6 rounded-lg shadow-md w-96">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Create Account
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+
           <input
             type="text"
             name="name"
             placeholder="Full Name"
-            onChange={handleChange}
             value={data.name}
-            className="border p-2 rounded"
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <input
             type="email"
             name="email"
             placeholder="Email"
-            onChange={handleChange}
             value={data.email}
-            className="border p-2 rounded"
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <input
             type="password"
             name="password"
             placeholder="Password"
-            onChange={handleChange}
             value={data.password}
-            className="border p-2 rounded"
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <input
             type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
-            onChange={handleChange}
             value={data.confirmPassword}
-            className="border p-2 rounded"
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-            Create Account
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg transition disabled:opacity-50"
+          >
+            {loading ? "Sending OTP..." : "Create Account"}
           </button>
         </form>
+
+        <p className="text-sm text-center mt-4">
+          Already have an account?{" "}
+          <span
+            className="text-blue-500 cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
       </div>
-    </section>
+    </div>
   );
 };
 

@@ -1,7 +1,73 @@
-const Login = () => {
-  return (
-    <div>Login</div>
-  )
-}
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import useAuthStore from "../../store/authStore";
 
-export default Login
+const Login = () => {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { login, loading } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const res = await login(data);
+
+    if (res.success) {
+      toast.success("Login successful");
+      navigate("/");
+    } else {
+      toast.error(res.message);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={data.email}
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg"
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={data.password}
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg"
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white py-3 rounded-lg"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

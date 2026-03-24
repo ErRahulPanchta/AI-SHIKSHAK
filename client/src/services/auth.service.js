@@ -15,3 +15,11 @@ export const logoutUser = () => {
 export const getMe = () => {
   return api.get("/auth/me");
 };
+
+export const requestOtp = (data) => {
+  return api.post("/auth/request-otp", data);
+};
+
+export const verifyOtp = (data) => {
+  return api.post("/auth/verify-otp", data);
+};
