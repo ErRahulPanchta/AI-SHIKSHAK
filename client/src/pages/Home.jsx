@@ -1,3 +1,18 @@
-export default function Home() {
-  return <div className="p-4 text-xl">Home Page</div>;
-}
+import Hero from "../components/home/Hero";
+import FeaturedBlogs from "../components/home/FeaturedBlogs";
+
+const Home = () => {
+  return (
+    <div>
+
+      {/* Hero Section */}
+      <Hero />
+
+      {/* Featured Blogs */}
+      <FeaturedBlogs />
+
+    </div>
+  );
+};
+
+export default Home;

@@ -24,23 +24,37 @@ const getOpenAI = () => {
 };
 
 const askAI = async (prompt) => {
-  const client = getOpenAI();
+  try {
+    const client = getOpenAI();
 
-  if (!client) {
-    throw new Error("AI service unavailable in test environment");
+    if (!client) {
+      return "AI service unavailable in this environment.";
+    }
+
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    return response.choices?.[0]?.message?.content || "";
+
+  } catch (error) {
+    console.error("AI ERROR:", {
+      message: error?.message,
+      status: error?.status,
+      code: error?.code,
+    });
+
+    if (error?.status === 429) {
+      return "⚠️ AI limit reached. Please try again later.";
+    }
+
+    if (error?.status === 401) {
+      return "⚠️ AI configuration error. Contact admin.";
+    }
+
+    return "⚠️ AI service temporarily unavailable.";
   }
-
-  const response = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-  });
-
-  return response.choices[0].message.content;
 };
 
 export const summarizeBlog = async (content) => {
@@ -50,7 +64,13 @@ export const summarizeBlog = async (content) => {
 
 export const generateTags = async (title, content) => {
   const prompt = tagPrompt(title, content);
-  return askAI(prompt);
+  const result = await askAI(prompt);
+
+  try {
+    return JSON.stringify(JSON.parse(result)); 
+  } catch {
+    return "[]"; 
+  }
 };
 
 export const explainConcept = async (topic) => {

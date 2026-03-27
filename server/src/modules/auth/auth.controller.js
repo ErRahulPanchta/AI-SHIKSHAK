@@ -29,13 +29,13 @@ export const login = asyncHandler(async (req, res) => {
   res
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: false,
       maxAge: 15 * 60 * 1000,
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })

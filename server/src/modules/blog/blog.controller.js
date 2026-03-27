@@ -3,7 +3,11 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
 export const createBlog = asyncHandler(async (req, res) => {
-  const blog = await blogService.createBlog(req.user.id, req.body);
+  const blog = await blogService.createBlog(
+    req.user.id,
+    req.user.role,
+    req.body,
+  );
 
   res.status(201).json(new ApiResponse(201, blog, "Blog created successfully"));
 });
@@ -37,6 +41,12 @@ export const rejectBlog = asyncHandler(async (req, res) => {
   );
 
   res.json(new ApiResponse(200, blog, "Blog rejected"));
+});
+
+export const getBlogById = asyncHandler(async (req, res) => {
+  const blog = await blogService.getBlogById(req.params.blogId, req.user.id);
+
+  res.json(new ApiResponse(200, blog));
 });
 
 export const getBlogBySlug = asyncHandler(async (req, res) => {

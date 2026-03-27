@@ -1,59 +1,66 @@
 import { create } from "zustand";
-import { loginUser, logoutUser, getMe } from "../services/auth.service";
+import api from "../services/api";
 
 const useAuthStore = create((set) => ({
   user: null,
-  loading: false,
   isAuthenticated: false,
+  loading: true, // only for initial load
 
-  login: async (data) => {
+  setUser: (user) =>
+    set({
+      user,
+      isAuthenticated: true,
+      loading: false,
+    }),
+
+  login: async (credentials) => {
     try {
-      set({ loading: true });
+      await api.post("/auth/login", credentials);
 
-      const res = await loginUser(data);
+      const res = await api.get("/auth/me");
 
       set({
         user: res.data.data,
         isAuthenticated: true,
+        loading: false,
       });
 
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        message:
-          error?.response?.data?.message || "Login failed",
+        message: error?.response?.data?.message || "Login failed",
       };
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  fetchUser: async () => {
-    try {
-      const res = await getMe();
-
-      set({
-        user: res.data.data,
-        isAuthenticated: true,
-      });
-    } catch {
-      set({
-        user: null,
-        isAuthenticated: false,
-      });
     }
   },
 
   logout: async () => {
     try {
-      await logoutUser();
+      await api.post("/auth/logout");
     } catch {}
 
     set({
       user: null,
       isAuthenticated: false,
     });
+  },
+
+  fetchUser: async () => {
+    try {
+      const res = await api.get("/auth/me");
+
+      set({
+        user: res.data.data,
+        isAuthenticated: true,
+        loading: false,
+      });
+    } catch (error) {
+      set({
+        user: null,
+        isAuthenticated: false,
+        loading: false,
+      });
+    }
   },
 }));
 

@@ -46,6 +46,8 @@ router.get("/trending", blogController.getTrendingBlogs);
 //recommed
 router.get("/:slug/recommendations", blogController.getRecommendedBlogs);
 
+router.get("/id/:blogId", auth, blogController.getBlogById);
+
 // Get blog by slug
 router.get("/:slug", viewMiddleware, blogController.getBlogBySlug);
 

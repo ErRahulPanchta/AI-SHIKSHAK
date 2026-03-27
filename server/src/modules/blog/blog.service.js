@@ -7,13 +7,12 @@ import { incrementView } from "../analytics/view.service.js";
 import { getCache, setCache } from "../cache/cache.service.js";
 import { CACHE_KEYS } from "../cache/cache.keys.js";
 
-export const createBlog = async (userId, data) => {
+export const createBlog = async (userId, userRole, data) => {
   const blog = await Blog.create({
     ...data,
     author: userId,
+    status: userRole === "admin" ? "approved" : "draft",
   });
-
-  logger.info(`Blog created by user ${userId}`);
 
   return blog;
 };
@@ -122,9 +121,14 @@ export const getBlogs = async (query) => {
   const { page, limit, skip } = pagination(query);
 
   const filter = {
-    status: "approved",
     isDeleted: false,
   };
+
+  if (query.status) {
+    filter.status = query.status;
+  } else {
+    filter.status = "approved";
+  }
 
   if (query.tag) {
     filter.tags = query.tag;
@@ -148,6 +152,19 @@ export const getBlogs = async (query) => {
     totalPages: Math.ceil(total / limit),
     blogs,
   };
+};
+export const getBlogById = async (blogId, userId) => {
+  const blog = await Blog.findById(blogId);
+
+  if (!blog || blog.isDeleted) {
+    throw new ApiError(404, "Blog not found");
+  }
+
+  if (blog.author.toString() !== userId.toString()) {
+    throw new ApiError(403, "Not authorized");
+  }
+
+  return blog;
 };
 
 export const getBlogsByAuthor = async (authorId, query) => {
@@ -288,7 +305,7 @@ export const getTrendingBlogs = async (query) => {
 
   await setCache(cacheKey, blogs, 300);
 
-  return (page, limit, blogs);
+  return { page, limit, blogs };
 };
 
 export const getRecommendedBlogs = async (slug) => {

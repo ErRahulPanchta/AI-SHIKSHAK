@@ -7,7 +7,11 @@ export const summarize = asyncHandler(async (req, res) => {
 
   const summary = await aiService.summarizeBlog(content);
 
-  res.json(new ApiResponse(200, { summary }));
+  res.json(
+    new ApiResponse(200, {
+      summary: summary || "Summary unavailable. Try again later.",
+    })
+  );
 });
 
 export const generateTags = asyncHandler(async (req, res) => {
@@ -15,7 +19,11 @@ export const generateTags = asyncHandler(async (req, res) => {
 
   const tags = await aiService.generateTags(title, content);
 
-  res.json(new ApiResponse(200, { tags }));
+  res.json(
+    new ApiResponse(200, {
+      tags: tags || "[]", 
+    })
+  );
 });
 
 export const explain = asyncHandler(async (req, res) => {
@@ -23,7 +31,12 @@ export const explain = asyncHandler(async (req, res) => {
 
   const explanation = await aiService.explainConcept(topic);
 
-  res.json(new ApiResponse(200, { explanation }));
+  res.json(
+    new ApiResponse(200, {
+      explanation:
+        explanation || "Explanation unavailable. Try again later.",
+    })
+  );
 });
 
 export const chat = asyncHandler(async (req, res) => {
@@ -31,5 +44,9 @@ export const chat = asyncHandler(async (req, res) => {
 
   const reply = await aiService.chatWithAI(message);
 
-  res.json(new ApiResponse(200, { reply }));
+  res.json(
+    new ApiResponse(200, {
+      reply: reply || "AI is currently unavailable. Please try again.",
+    })
+  );
 });
