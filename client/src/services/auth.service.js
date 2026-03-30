@@ -1,25 +1,25 @@
 import api from "./api.js";
 
 export const registerUser = (data) => {
-  return api.post("/auth/register", data);
+  return api.post("/api/auth/register", data);
 };
 
 export const loginUser = (data) => {
-  return api.post("/auth/login", data);
+  return api.post("/api/auth/login", data);
 };
 
 export const logoutUser = () => {
-  return api.post("/auth/logout");
+  return api.post("/api/auth/logout");
 };
 
 export const getMe = () => {
-  return api.get("/auth/me");
+  return api.get("/api/auth/me");
 };
 
 export const requestOtp = (data) => {
-  return api.post("/auth/request-otp", data);
+  return api.post("/api/auth/request-otp", data);
 };
 
 export const verifyOtp = (data) => {
-  return api.post("/auth/verify-otp", data);
+  return api.post("/api/auth/verify-otp", data);
 };

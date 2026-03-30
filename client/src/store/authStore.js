@@ -4,7 +4,7 @@ import api from "../services/api";
 const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
-  loading: true, // only for initial load
+  loading: true, 
 
   setUser: (user) =>
     set({
@@ -15,9 +15,9 @@ const useAuthStore = create((set) => ({
 
   login: async (credentials) => {
     try {
-      await api.post("/auth/login", credentials);
+      await api.post("/api/auth/login", credentials);
 
-      const res = await api.get("/auth/me");
+      const res = await api.get("/api/auth/me");
 
       set({
         user: res.data.data,
@@ -36,7 +36,7 @@ const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post("/api/auth/logout");
     } catch {}
 
     set({
@@ -47,7 +47,7 @@ const useAuthStore = create((set) => ({
 
   fetchUser: async () => {
     try {
-      const res = await api.get("/auth/me");
+      const res = await api.get("/api/auth/me");
 
       set({
         user: res.data.data,

@@ -11,7 +11,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (originalRequest.url.includes("/auth/refresh")) {
+    if (originalRequest.url.includes("/api/auth/refresh")) {
       return Promise.reject(error);
     }
 
@@ -21,8 +21,8 @@ api.interceptors.response.use(
 
 
     if (
-      originalRequest.url.includes("/auth/login") ||
-      originalRequest.url.includes("/auth/register")
+      originalRequest.url.includes("/api/auth/login") ||
+      originalRequest.url.includes("/api/auth/register")
     ) {
       return Promise.reject(error);
     }
@@ -35,7 +35,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await api.post("/auth/refresh");
+        await api.post("/api/auth/refresh");
         return api(originalRequest);
       } catch (refreshError) {
         return Promise.reject(refreshError);

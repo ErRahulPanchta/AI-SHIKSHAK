@@ -36,7 +36,7 @@ const Login = () => {
       const res = await login(data);
 
       if (res.success) {
-        toast.success("Welcome back 🚀");
+        toast.success("Welcome back ");
         navigate("/");
       } else {
         toast.error(res.message);
@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-500 to-indigo-600 px-4">
 
       <div className="bg-white/90 backdrop-blur-lg w-full max-w-md p-8 rounded-2xl shadow-xl">
 

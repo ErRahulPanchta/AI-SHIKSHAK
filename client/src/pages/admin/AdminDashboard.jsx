@@ -27,7 +27,6 @@ const AdminDashboard = () => {
     fetchBlogs();
   }, []);
 
-  // ✅ APPROVE
   const handleApprove = async (id) => {
     try {
       await approveBlog(id);
