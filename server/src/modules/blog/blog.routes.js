@@ -16,8 +16,6 @@ import viewMiddleware from "../../middleware/view.middleware.js";
 
 const router = Router();
 
-// Get all blogs
-
 /**
  * @swagger
  * tags:
@@ -29,49 +27,90 @@ const router = Router();
  * @swagger
  * /blogs:
  *   get:
- *     summary: Get all blogs
+ *     summary: Get all blogs (with filters, pagination)
  *     tags: [Blog]
- *     responses:
- *       200:
- *         description: List of blogs
  */
 router.get("/", blogController.getBlogs);
 
-//search a blog
+/**
+ * @swagger
+ * /blogs/search:
+ *   get:
+ *     summary: Search blogs
+ *     tags: [Blog]
+ */
 router.get("/search", blogController.searchBlogs);
 
-//trending
+/**
+ * @swagger
+ * /blogs/trending:
+ *   get:
+ *     summary: Get trending blogs
+ *     tags: [Blog]
+ */
 router.get("/trending", blogController.getTrendingBlogs);
 
-//recommed
+/**
+ * @swagger
+ * /blogs/{slug}/recommendations:
+ *   get:
+ *     summary: Get recommended blogs
+ *     tags: [Blog]
+ */
 router.get("/:slug/recommendations", blogController.getRecommendedBlogs);
 
-router.get("/id/:blogId", auth, blogController.getBlogById);
-
-// Get blog by slug
-router.get("/:slug", viewMiddleware, blogController.getBlogBySlug);
-
-// Get related blogs
+/**
+ * @swagger
+ * /blogs/{slug}/related:
+ *   get:
+ *     summary: Get related blogs
+ *     tags: [Blog]
+ */
 router.get("/:slug/related", blogController.getRelatedBlogs);
 
-// Get blogs by author
+/**
+ * @swagger
+ * /blogs/author/{userId}:
+ *   get:
+ *     summary: Get blogs by author
+ *     tags: [Blog]
+ */
 router.get("/author/:userId", blogController.getBlogsByAuthor);
 
-// Create blog
+/**
+ * @swagger
+ * /blogs/{slug}:
+ *   get:
+ *     summary: Get blog by slug
+ *     tags: [Blog]
+ */
+router.get("/:slug", viewMiddleware, blogController.getBlogBySlug);
+
+/**
+ * @swagger
+ * /blogs/id/{blogId}:
+ *   get:
+ *     summary: Get blog by ID (owner only)
+ *     tags: [Blog]
+ */
+router.get("/id/:blogId", auth, blogController.getBlogById);
 
 /**
  * @swagger
  * /blogs:
  *   post:
- *     summary: Create a blog
+ *     summary: Create blog
  *     tags: [Blog]
- *     responses:
- *       201:
- *         description: Blog created
  */
 router.post("/", auth, validate(createBlogSchema), blogController.createBlog);
 
-// Update blog
+/**
+ * @swagger
+ * /blogs/{blogId}:
+ *   patch:
+ *     summary: Update blog
+ *     tags: [Blog]
+ */
 router.patch(
   "/:blogId",
   auth,
@@ -79,7 +118,13 @@ router.patch(
   blogController.updateBlog,
 );
 
-// Submit blog for review
+/**
+ * @swagger
+ * /blogs/{blogId}/submit:
+ *   patch:
+ *     summary: Submit blog for review
+ *     tags: [Blog]
+ */
 router.patch(
   "/:blogId/submit",
   auth,
@@ -87,13 +132,31 @@ router.patch(
   blogController.submitBlog,
 );
 
-// Delete blog
+/**
+ * @swagger
+ * /blogs/{blogId}:
+ *   delete:
+ *     summary: Delete blog
+ *     tags: [Blog]
+ */
 router.delete("/:blogId", auth, blogController.deleteBlog);
 
-// Like blog
+/**
+ * @swagger
+ * /blogs/{blogId}/like:
+ *   post:
+ *     summary: Like blog
+ *     tags: [Blog]
+ */
 router.post("/:blogId/like", auth, blogController.likeBlog);
 
-// Approve blog
+/**
+ * @swagger
+ * /blogs/admin/{blogId}/approve:
+ *   patch:
+ *     summary: Approve blog
+ *     tags: [Blog]
+ */
 router.patch(
   "/admin/:blogId/approve",
   auth,
@@ -102,7 +165,13 @@ router.patch(
   blogController.approveBlog,
 );
 
-// Reject blog
+/**
+ * @swagger
+ * /blogs/admin/{blogId}/reject:
+ *   patch:
+ *     summary: Reject blog
+ *     tags: [Blog]
+ */
 router.patch(
   "/admin/:blogId/reject",
   auth,

@@ -10,9 +10,9 @@ export const submitBlog = (blogId) => {
   return api.patch(`/blogs/${blogId}/submit`);
 };
 
-// GET ALL BLOGS
-export const getBlogs = () => {
-  return api.get("/blogs");
+// GET ALL BLOGS (with query support)
+export const getBlogs = (params = {}) => {
+  return api.get("/blogs", { params });
 };
 
 // GET SINGLE BLOG
@@ -20,9 +20,14 @@ export const getBlogBySlug = (slug) => {
   return api.get(`/blogs/${slug}`);
 };
 
+// GET BLOG BY ID (for edit/admin)
+export const getBlogById = (id) => {
+  return api.get(`/blogs/id/${id}`);
+};
+
 // GET MY BLOGS
-export const getMyBlogs = (userId) => {
-  return api.get(`/blogs/author/${userId}`);
+export const getMyBlogs = (userId, params = {}) => {
+  return api.get(`/blogs/author/${userId}`, { params });
 };
 
 // UPDATE BLOG
@@ -30,6 +35,34 @@ export const updateBlog = (blogId, data) => {
   return api.patch(`/blogs/${blogId}`, data);
 };
 
-export const getBlogById = (id) => {
-  return api.get(`/blogs/id/${id}`);
+// DELETE BLOG (soft delete)
+export const deleteBlog = (blogId) => {
+  return api.delete(`/blogs/${blogId}`);
+};
+
+// LIKE BLOG
+export const likeBlog = (blogId) => {
+  return api.post(`/blogs/${blogId}/like`);
+};
+
+// SEARCH BLOGS
+export const searchBlogs = (query, params = {}) => {
+  return api.get(`/blogs/search`, {
+    params: { q: query, ...params },
+  });
+};
+
+// TRENDING BLOGS
+export const getTrendingBlogs = (params = {}) => {
+  return api.get("/blogs/trending", { params });
+};
+
+// RELATED BLOGS
+export const getRelatedBlogs = (slug) => {
+  return api.get(`/blogs/${slug}/related`);
+};
+
+// RECOMMENDED BLOGS
+export const getRecommendedBlogs = (slug) => {
+  return api.get(`/blogs/${slug}/recommendations`);
 };

@@ -33,9 +33,8 @@ app.set("trust proxy", 1);
 app.use(corsMiddleware);
 
 // Security middlewares (disabled in tests)
-if (env.NODE_ENV !== "test") {
+if (env.NODE_ENV !== "production") {
   app.use(helmetMiddleware);
-  app.use(apiLimiter);
 }
 
 // Body parsers
@@ -43,7 +42,7 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Sanitization (disabled in tests)
-if (env.NODE_ENV !== "test") {
+if (env.NODE_ENV !== "production") {
   // app.use(mongoSanitizeMiddleware);
   app.use(xssMiddleware);
   app.use(hppMiddleware);

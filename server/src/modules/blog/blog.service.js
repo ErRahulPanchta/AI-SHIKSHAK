@@ -277,20 +277,14 @@ export const searchBlogs = async (query) => {
 };
 
 export const getTrendingBlogs = async (query) => {
-  const { page = 1, limit = 10 } = query;
+  let { page = 1, limit = 10 } = query;
 
-  const cacheKey = CACHE_KEYS.TRENDING(page, limit);
-
-  const cached = await getCache(cacheKey);
-
-  if (cached) {
-    return cached;
-  }
+  page = parseInt(page);
+  limit = parseInt(limit);
 
   const blogs = await Blog.aggregate([
-    {
-      $match: { status: "approved", isDeleted: false },
-    },
+    { $match: { status: "approved", isDeleted: false } },
+
     {
       $addFields: {
         trendingScore: {
@@ -298,12 +292,11 @@ export const getTrendingBlogs = async (query) => {
         },
       },
     },
+
     { $sort: { trendingScore: -1 } },
     { $skip: (page - 1) * limit },
-    { $limit: limit },
+    { $limit: limit }, // ✅ now correct
   ]);
-
-  await setCache(cacheKey, blogs, 300);
 
   return { page, limit, blogs };
 };
@@ -325,7 +318,10 @@ export const getRecommendedBlogs = async (slug) => {
         _id: { $ne: blog._id },
         status: "approved",
         isDeleted: false,
-        $or: [{ tags: { $in: blog.tags } }, { category: blog.category }],
+        $or: [
+          { tags: { $in: blog.tags } },
+          { category: blog.category },
+        ],
       },
     },
     {
@@ -335,22 +331,33 @@ export const getRecommendedBlogs = async (slug) => {
         },
       },
     },
-    {
-      $sort: { score: -1 },
-    },
-    {
-      $limit: 5,
-    },
+    { $sort: { score: -1 } },
+    { $limit: 5 },
     {
       $project: {
+        _id: 1,
         title: 1,
         slug: 1,
         coverImage: 1,
         views: 1,
         likes: 1,
+        author: 1,
+        category: 1,
       },
     },
   ]);
 
-  return recommendations;
+  await Blog.populate(recommendations, {
+    path: "author",
+    select: "name avatar",
+  });
+
+  await Blog.populate(recommendations, {
+    path: "category",
+    select: "name",
+  });
+
+  return {
+    data: recommendations,
+  };
 };

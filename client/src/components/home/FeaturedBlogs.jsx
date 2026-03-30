@@ -11,7 +11,6 @@ const FeaturedBlogs = () => {
       try {
         const res = await getBlogs();
 
-        // 🔥 show top 3–6 blogs
         setBlogs(res.data.data.blogs.slice(0, 6));
       } catch (error) {
         toast.error("Failed to load blogs");

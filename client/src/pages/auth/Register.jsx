@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { requestOtp } from "../../services/auth.service";
+
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 
 const Register = () => {
   const [data, setData] = useState({
@@ -20,100 +22,120 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!data.name || !data.email || !data.password) {
-    return toast.error("All fields are required");
-  }
+    if (!data.name || !data.email || !data.password) {
+      return toast.error("All fields are required");
+    }
 
-  if (data.password.length < 6) {
-    return toast.error("Password must be at least 6 characters");
-  }
+    if (data.password.length < 6) {
+      return toast.error("Password must be at least 6 characters");
+    }
 
-  if (data.password !== data.confirmPassword) {
-    return toast.error("Passwords do not match");
-  }
+    if (data.password !== data.confirmPassword) {
+      return toast.error("Passwords do not match");
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    await requestOtp({
-      email: data.email,
-      type: "verify",
-    });
+      await requestOtp({
+        email: data.email,
+        type: "verify",
+      });
 
-    toast.success("OTP sent to your email");
+      toast.success("OTP sent 📩");
 
-    navigate("/verify-otp", { state: data });
-  } catch (error) {
-    toast.error(error?.response?.data?.message || "Failed to send OTP");
-  } finally {
-    setLoading(false);
-  }
-};
+      navigate("/verify-otp", { state: data });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Create Account
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-500 to-indigo-600 px-4">
+
+      <div className="bg-white/90 backdrop-blur-lg w-full max-w-md p-8 rounded-2xl shadow-xl">
+
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+          Create Account 🚀
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={data.name}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+          {/* Name */}
+          <div className="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-purple-500">
+            <FaUser className="text-gray-400 mr-2" />
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={data.name}
+              onChange={handleChange}
+              className="w-full p-3 outline-none bg-transparent"
+            />
+          </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={data.email}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+          {/* Email */}
+          <div className="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-purple-500">
+            <FaEnvelope className="text-gray-400 mr-2" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={data.email}
+              onChange={handleChange}
+              className="w-full p-3 outline-none bg-transparent"
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={data.password}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+          {/* Password */}
+          <div className="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-purple-500">
+            <FaLock className="text-gray-400 mr-2" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={data.password}
+              onChange={handleChange}
+              className="w-full p-3 outline-none bg-transparent"
+            />
+          </div>
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={data.confirmPassword}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+          {/* Confirm Password */}
+          <div className="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-purple-500">
+            <FaLock className="text-gray-400 mr-2" />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={data.confirmPassword}
+              onChange={handleChange}
+              className="w-full p-3 outline-none bg-transparent"
+            />
+          </div>
 
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition disabled:opacity-50"
           >
             {loading ? "Sending OTP..." : "Create Account"}
           </button>
         </form>
 
-        <p className="text-sm text-center mt-4">
+        {/* Navigation */}
+        <p className="text-sm text-center mt-5 text-gray-600">
           Already have an account?{" "}
-          <span
-            className="text-blue-500 cursor-pointer"
-            onClick={() => navigate("/login")}
+          <Link
+            to="/login"
+            className="text-purple-600 font-medium hover:underline"
           >
-            Login
-          </span>
+            Sign in
+          </Link>
         </p>
       </div>
     </div>

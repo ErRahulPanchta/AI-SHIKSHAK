@@ -102,6 +102,6 @@ export const getTrendingBlogs = asyncHandler(async (req, res) => {
 
 export const getRecommendedBlogs = asyncHandler(async (req, res) => {
   const blogs = await blogService.getRecommendedBlogs(req.params.slug);
-
+console.log("Recommended API HIT");
   res.json(new ApiResponse(200, blogs));
 });

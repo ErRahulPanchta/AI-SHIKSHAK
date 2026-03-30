@@ -1,35 +1,49 @@
 import axios from "axios";
-import useAuthStore from "../store/authStore";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 });
 
-// 🔥 RESPONSE INTERCEPTOR
+
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
 
-    // if 401 and not retried
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (originalRequest.url.includes("/auth/refresh")) {
+      return Promise.reject(error);
+    }
+
+    if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+
+    if (
+      originalRequest.url.includes("/auth/login") ||
+      originalRequest.url.includes("/auth/register")
+    ) {
+      return Promise.reject(error);
+    }
+
+    if (!document.cookie.includes("refreshToken")) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 401) {
       originalRequest._retry = true;
 
       try {
         await api.post("/auth/refresh");
-        await useAuthStore.getState().fetchUser();
-        return api(originalRequest); // retry
-      } catch (err) {
-        const logout = useAuthStore.getState().logout;
-        logout();
-
-        window.location.href = "/login";
+        return api(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
       }
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;

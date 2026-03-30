@@ -18,7 +18,7 @@ import { authLimiter } from "../../middleware/security/rateLimit.middleware.js";
 const router = express.Router();
 
 const skipLimiter =
-  process.env.NODE_ENV === "test" ? (req, res, next) => next() : authLimiter;
+  process.env.NODE_ENV !== "production" ? (req, res, next) => next() : authLimiter;
 
   /**
  * @swagger

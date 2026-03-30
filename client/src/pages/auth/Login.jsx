@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import useAuthStore from "../../store/authStore";
+
+import { FaEnvelope, FaLock } from "react-icons/fa";
 
 const Login = () => {
   const [data, setData] = useState({
@@ -28,57 +30,81 @@ const Login = () => {
       return toast.error("All fields are required");
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const res = await login(data);
+      const res = await login(data);
 
-    if (res.success) {
-      toast.success("Login successful");
-      navigate("/");
-    } else {
-      toast.error(res.message);
+      if (res.success) {
+        toast.success("Welcome back 🚀");
+        navigate("/");
+      } else {
+        toast.error(res.message);
+      }
+    } catch {
+      toast.error("Login failed");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 px-4">
 
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Login
+      <div className="bg-white/90 backdrop-blur-lg w-full max-w-md p-8 rounded-2xl shadow-xl">
+
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+          Welcome Back 👋
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={data.email}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg"
-          />
+          {/* Email */}
+          <div className="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-blue-500">
+            <FaEnvelope className="text-gray-400 mr-2" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={data.email}
+              onChange={handleChange}
+              className="w-full p-3 outline-none bg-transparent"
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={data.password}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-lg"
-          />
+          {/* Password */}
+          <div className="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-blue-500">
+            <FaLock className="text-gray-400 mr-2" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={data.password}
+              onChange={handleChange}
+              className="w-full p-3 outline-none bg-transparent"
+            />
+          </div>
 
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
+
+        {/* Navigation */}
+        <p className="text-sm text-center mt-5 text-gray-600">
+          Don’t have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-600 font-medium hover:underline"
+          >
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   );

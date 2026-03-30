@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useAuthStore from "./store/authStore";
 import AppRoutes from "./routes/AppRoutes";
 import Layout from "./components/layout/Layout";
@@ -7,7 +7,12 @@ import Layout from "./components/layout/Layout";
 function App() {
   const { fetchUser, loading } = useAuthStore();
 
+  const hasFetched = useRef(false);
+
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
     fetchUser();
   }, []);
 

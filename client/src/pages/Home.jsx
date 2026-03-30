@@ -1,16 +1,11 @@
 import Hero from "../components/home/Hero";
-import FeaturedBlogs from "../components/home/FeaturedBlogs";
+import TrendingBlogs from "../components/home/TrendingBlogs";
 
 const Home = () => {
   return (
     <div>
-
-      {/* Hero Section */}
       <Hero />
-
-      {/* Featured Blogs */}
-      <FeaturedBlogs />
-
+      <TrendingBlogs />
     </div>
   );
 };
