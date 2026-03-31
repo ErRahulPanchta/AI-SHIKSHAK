@@ -3,6 +3,8 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 import otpService from "./otp.service.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 //register
 export const register = asyncHandler(async (req, res) => {
   const user = await authService.registerUser(req.body);
@@ -26,12 +28,10 @@ export const login = asyncHandler(async (req, res) => {
     req.body,
   );
 
-  const isProduction = process.env.NODE_ENV === "production";
-
   res
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: isProduction, // 🔥 true in production
+      secure: isProduction, 
       sameSite: isProduction ? "None" : "Lax",
       maxAge: 15 * 60 * 1000,
     })
