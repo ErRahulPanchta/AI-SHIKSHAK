@@ -1,10 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:8080",
   withCredentials: true,
 });
-
 
 api.interceptors.response.use(
   (res) => res,
@@ -18,7 +17,6 @@ api.interceptors.response.use(
     if (originalRequest._retry) {
       return Promise.reject(error);
     }
-
 
     if (
       originalRequest.url.includes("/api/auth/login") ||
@@ -43,7 +41,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
