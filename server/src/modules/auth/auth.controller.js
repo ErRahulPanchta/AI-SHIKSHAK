@@ -26,17 +26,19 @@ export const login = asyncHandler(async (req, res) => {
     req.body,
   );
 
+  const isProduction = process.env.NODE_ENV === "production";
+
   res
     .cookie("accessToken", accessToken, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      secure: isProduction, // 🔥 true in production
+      sameSite: isProduction ? "None" : "Lax",
       maxAge: 15 * 60 * 1000,
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .status(200)
@@ -61,8 +63,17 @@ export const logout = asyncHandler(async (req, res) => {
     await authService.logoutUser(refreshToken);
   }
 
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
+  });
 
   res.status(200).json(new ApiResponse(200, {}, "Logout successful"));
 });

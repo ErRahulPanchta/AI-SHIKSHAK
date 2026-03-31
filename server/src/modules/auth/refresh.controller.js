@@ -17,11 +17,13 @@ export const refresh = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      maxAge: 15 * 60 * 1000,
     })
     .cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .status(200)
     .json(new ApiResponse(200, {}, "Token refreshed"));

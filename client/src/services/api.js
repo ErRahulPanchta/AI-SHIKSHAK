@@ -10,22 +10,15 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (originalRequest.url.includes("/api/auth/refresh")) {
-      return Promise.reject(error);
-    }
-
     if (originalRequest._retry) {
       return Promise.reject(error);
     }
 
     if (
       originalRequest.url.includes("/api/auth/login") ||
-      originalRequest.url.includes("/api/auth/register")
+      originalRequest.url.includes("/api/auth/register") ||
+      originalRequest.url.includes("/api/auth/refresh")
     ) {
-      return Promise.reject(error);
-    }
-
-    if (!document.cookie.includes("refreshToken")) {
       return Promise.reject(error);
     }
 
@@ -33,15 +26,15 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await api.post("/api/auth/refresh");
+        await api.post("/api/auth/refresh"); // cookie auto sent
         return api(originalRequest);
-      } catch (refreshError) {
-        return Promise.reject(refreshError);
+      } catch (err) {
+        return Promise.reject(err);
       }
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;
