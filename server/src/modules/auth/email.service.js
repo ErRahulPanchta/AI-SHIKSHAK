@@ -1,18 +1,14 @@
-import nodemailer from "nodemailer";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 import { env } from "../../config/env.js";
+import ApiError from "../../utils/ApiError.js";
 
-let transporter = null;
+const client = SibApiV3Sdk.ApiClient.instance;
 
 if (env.NODE_ENV !== "test") {
-  transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: Number(env.SMTP_PORT),
-    auth: {
-      user: env.SMTP_USER,
-      pass: env.SMTP_PASS,
-    },
-  });
+  client.authentications["api-key"].apiKey = env.BREVO_API_KEY;
 }
+
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 export const sendOTPEmail = async (email, otp, type = "verify") => {
   if (env.NODE_ENV === "test") return;
@@ -58,10 +54,21 @@ export const sendOTPEmail = async (email, otp, type = "verify") => {
   </div>
   `;
 
-  await transporter.sendMail({
-    from: env.EMAIL_FROM,
-    to: email,
-    subject,
-    html,
-  });
+  try {
+    await apiInstance.sendTransacEmail({
+      sender: {
+        email: env.EMAIL_FROM,
+        name: "AI SHIKSHAK",
+      },
+      to: [{ email }],
+      subject,
+      htmlContent: html,
+    });
+
+    console.log(`OTP email sent via Brevo API to ${email}`);
+  } catch (err) {
+    console.error("BREVO EMAIL ERROR:", err);
+
+    throw new ApiError(500, "Failed to send OTP email");
+  }
 };

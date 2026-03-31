@@ -42,6 +42,7 @@ const envSchema = z.object({
   SMTP_PORT: isTest ? z.string().optional() : z.string(),
   SMTP_USER: isTest ? z.string().optional() : z.string(),
   SMTP_PASS: isTest ? z.string().optional() : z.string(),
+  BREVO_API_KEY: isTest ? z.string().optional() : z.string(),
   EMAIL_FROM: isTest ? z.string().optional() : z.string(),
   OTP_EXPIRE_MINUTES: z.string(),
 });
