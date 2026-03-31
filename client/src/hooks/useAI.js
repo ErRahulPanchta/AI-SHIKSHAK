@@ -1,15 +1,19 @@
 import { useState } from "react";
-import api from "../services/api";
 import toast from "react-hot-toast";
+import {
+  chatAI,
+  summarizeAI,
+  generateTagsAI,
+  explainAI,
+} from "../services/ai.service";
 
 export const useAI = () => {
   const [loading, setLoading] = useState(false);
 
-  const request = async (url, body) => {
+  const handleRequest = async (fn, args) => {
     try {
       setLoading(true);
-      const res = await api.post(url, body);
-      return res.data.data;
+      return await fn(...args);
     } catch (err) {
       console.error("AI ERROR:", err);
 
@@ -28,17 +32,17 @@ export const useAI = () => {
   };
 
   const handleGenerate = async (prompt) => {
-    const res = await request("/ai/chat", { message: prompt });
+    const res = await handleRequest(chatAI, [prompt]);
     return res?.reply || "";
   };
 
   const handleSummarize = async (content) => {
-    const res = await request("/ai/summarize", { content });
+    const res = await handleRequest(summarizeAI, [content]);
     return res?.summary || "";
   };
 
   const handleTags = async (title, content) => {
-    const res = await request("/ai/tags", { title, content });
+    const res = await handleRequest(generateTagsAI, [title, content]);
 
     try {
       return JSON.parse(res?.tags || "[]");
@@ -48,7 +52,7 @@ export const useAI = () => {
   };
 
   const handleExplain = async (topic) => {
-    const res = await request("/ai/explain", { topic });
+    const res = await handleRequest(explainAI, [topic]);
     return res?.explanation || "";
   };
 
