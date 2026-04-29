@@ -22,7 +22,6 @@ const BlogList = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Debounced search
   const debouncedSearch = useDebounce(search, 500);
 
   const fetchBlogs = async () => {
@@ -53,21 +52,18 @@ const BlogList = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto">
 
-      {/* 🔥 Title */}
       <h2 className="text-3xl font-bold text-center mb-6">
         Explore Blogs
       </h2>
 
-      {/* 🔍 Search */}
       <SearchBar
         value={search}
         onChange={(val) => {
           setSearch(val);
-          setPage(1); // reset page
+          setPage(1);
         }}
       />
 
-      {/* 🏷 Category */}
       <CategoryFilter
         selected={category}
         onChange={(cat) => {
@@ -76,7 +72,6 @@ const BlogList = () => {
         }}
       />
 
-      {/* ⏳ Loading */}
       {loading ? (
         <div className="flex justify-center mt-10">
           <p className="text-gray-500 animate-pulse">
@@ -94,7 +89,6 @@ const BlogList = () => {
         </div>
       ) : (
         <>
-          {/* 🧠 Grid */}
           <motion.div
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
             initial={{ opacity: 0 }}
@@ -110,7 +104,6 @@ const BlogList = () => {
             ))}
           </motion.div>
 
-          {/* 📄 Pagination */}
           <Pagination
             page={page}
             totalPages={totalPages}

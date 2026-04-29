@@ -17,7 +17,6 @@ const TrendingBlogs = () => {
 
       const res = await getTrendingBlogs({ limit: 6 });
 
-      // ✅ FIX: correct nested response
       const data = res.data?.data?.blogs || res.data?.data?.data || [];
 
       setBlogs(Array.isArray(data) ? data : []);
@@ -36,7 +35,6 @@ const TrendingBlogs = () => {
   return (
     <section className="px-6 py-12 max-w-6xl mx-auto">
 
-      {/* 🔥 Title */}
       <div className="flex items-center justify-center gap-2 mb-10">
         <FaFire className="text-orange-500 text-2xl" />
         <h2 className="text-3xl font-bold text-center">
@@ -44,7 +42,6 @@ const TrendingBlogs = () => {
         </h2>
       </div>
 
-      {/* ⏳ Loading Skeleton */}
       {loading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
@@ -77,7 +74,6 @@ const TrendingBlogs = () => {
               whileHover={{ scale: 1.04 }}
               transition={{ duration: 0.2 }}
             >
-              {/* ✅ Pass index instead of manual badge */}
               <BlogCard blog={blog} index={index} />
             </motion.div>
           ))}

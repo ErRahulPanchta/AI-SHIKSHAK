@@ -12,7 +12,19 @@ export const connectRedis = async () => {
 
   try {
     redisClient = createClient({
-      url: env.REDIS_URL,
+      url: env.REDIS_URL, // redis://default:password@host:port
+
+      socket: {
+        // prevent infinite reconnect loops on bad connections
+        reconnectStrategy: (retries) => {
+          if (retries > 5) {
+            logger.error("Redis reconnect limit reached.");
+            return false; // stop retrying
+          }
+
+          return Math.min(retries * 500, 3000);
+        },
+      },
     });
 
     redisClient.on("connect", () => {
@@ -32,9 +44,8 @@ export const connectRedis = async () => {
     });
 
     redisClient.on("error", (err) => {
-      logger.error("Redis error FULL:", err);
+      logger.error("Redis error:", err.message);
       console.error("REDIS ERROR RAW:", err);
-      console.error("REDIS ERROR MESSAGE:", err?.message);
     });
 
     await redisClient.connect();
@@ -42,16 +53,15 @@ export const connectRedis = async () => {
     return redisClient;
   } catch (error) {
     logger.warn("Redis unavailable. Continuing without cache.");
-    logger.error("Redis connection failed:", error);
-    console.error("REDIS CATCH ERROR:", error);
-    console.error("REDIS CATCH MESSAGE:", error?.message);
+    logger.error("Redis connection failed:", error.message);
     return null;
   }
 };
 
 export const getRedisClient = () => {
-  if (!redisClient) {
-    logger.warn(" Redis not initialized yet");
+  if (!redisClient || !redisClient.isOpen) {
+    return null;
   }
+
   return redisClient;
 };
